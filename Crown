@@ -16,7 +16,7 @@ end);
 
 Players.PlayerAdded:Connect(function(Player)
     Player.CharacterAdded:Wait();
-    if Player.Name == "bIessmyrev" then
+    if Player.UserId == "3499991340" then
         Player.CharacterAdded:Connect(CharacterAddedCrown);
         CharacterAddedCrown(Player.Character);
     end
