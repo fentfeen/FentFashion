@@ -1,7 +1,3 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/fentfeen/FentFashion/refs/heads/main/Crown"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/fentfeen/FentFashion/refs/heads/main/star"))()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/fentfeen/FentFashion/refs/heads/main/Devil"))()
-
 local Buffer = {}
 Buffer.__index = Buffer
 
@@ -4602,3 +4598,99 @@ pcall(function()
 	MainBuffer:delete()
 	--> gcinfo("collect")
 end)
+
+local Players = game:GetService('Players');
+local RunService = game:GetService('RunService');
+
+local function CharacterAddedDevil(Character)
+    local display = Character:WaitForChild('Humanoid').DisplayName
+    Character:WaitForChild('Humanoid').DisplayName = "[😈]"..display.."";
+end;
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "Lomatia" then
+        Player.CharacterAdded:Connect(CharacterAddedDevil);
+        CharacterAddedDevil(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "FENTIN4FEENNUMBER1" then
+        Player.CharacterAdded:Connect(CharacterAddedDevil);
+        CharacterAddedDevil(Player.Character);
+    end
+end);
+
+local Players = game:GetService('Players');
+local RunService = game:GetService('RunService');
+
+local function CharacterAddedCrown(Character)
+    local display = Character:WaitForChild('Humanoid').DisplayName
+    Character:WaitForChild('Humanoid').DisplayName = "[👑]"..display.."";
+end;
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "droolingforassrnxd" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "bIessmyrev" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "lwcv" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "zazazaza" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+local Players = game:GetService('Players');
+local RunService = game:GetService('RunService');
+
+local function CharacterAddedStar(Character)
+    local display = Character:WaitForChild('Humanoid').DisplayName
+    Character:WaitForChild('Humanoid').DisplayName = "[⭐]"..display.."";
+end;
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "ConfigCommanderRice" then
+        Player.CharacterAdded:Connect(CharacterAddedStar);
+        CharacterAddedStar(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "YUMMYFENT2" then
+        Player.CharacterAdded:Connect(CharacterAddedStar);
+        CharacterAddedStar(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "FentFeenin2009" then
+        Player.CharacterAdded:Connect(CharacterAddedStar);
+        CharacterAddedStar(Player.Character);
+    end
+end);
