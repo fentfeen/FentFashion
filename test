@@ -3368,10 +3368,10 @@ MainBuffer:write(function()
 						Services.TweenService:Create(game.Lighting, TweenInfo.new(.7), {ColorShift_Top = Color3.fromRGB(0,255,0)}):Play()
 						Services.TweenService:Create(game.Lighting, TweenInfo.new(.7), {Brightness = 100}):Play()
 						Services.TweenService:Create(game.Lighting, TweenInfo.new(.7), {Ambient = Color3.fromRGB(0,255,0)}):Play()
-					end 
-					Modules["Chat"]("C MOON: GRAVITY MOON")
-                    task.wait(0.2)
+					end
                     Modules["Chat"]("🅖🅖 🅝🅘🅖🅖🅐")
+                    task.wait(2)
+					Modules["Chat"]("C MOON: GRAVITY MOON")
 					Modules["AnimPlay"](Services.LocalPlayer.Character,8254789608)
 					Settings["Grab"]["GrabbedCharacter"].UpperTorso.Position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0,2000,0)
 					task.wait(3.5)
@@ -3747,6 +3747,8 @@ MainBuffer:write(function()
                     task.wait(1.8)
                     Modules["Play"]("7817367014")
                     Modules["Chat"]("Malevolent Shrine.")
+                    task.wait(2)
+                    Modules["Chat"]("🅖🅖 🅝🅘🅖🅖🅐")
                     task.wait(5)
                     Modules["Play"]("7817336081")
                     task.wait(2.8)
@@ -4600,3 +4602,117 @@ pcall(function()
 	MainBuffer:delete()
 	--> gcinfo("collect")
 end)
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Function to prevent sitting
+local function preventSitting()
+    -- Check if humanoid is sitting and set it to false
+    if character and character:FindFirstChild("Humanoid") then
+        character.Humanoid.Sit = false
+    end
+end
+
+-- Event listener to prevent sitting whenever the player attempts to sit
+character.Humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
+    if character.Humanoid.Sit == true then
+        preventSitting()
+    end
+end)
+
+local Players = game:GetService('Players');
+local RunService = game:GetService('RunService');
+
+local function CharacterAddedCrown(Character)
+    local display = Character:WaitForChild('Humanoid').DisplayName
+    Character:WaitForChild('Humanoid').DisplayName = "[👑]"..display.."";
+end;
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "droolingforassrnxd" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "bIessmyrev" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "lwcv" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "zazazaza" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+local Players = game:GetService('Players');
+local RunService = game:GetService('RunService');
+
+local function CharacterAddedStar(Character)
+    local display = Character:WaitForChild('Humanoid').DisplayName
+    Character:WaitForChild('Humanoid').DisplayName = "[⭐]"..display.."";
+end;
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "ConfigCommanderRice" then
+        Player.CharacterAdded:Connect(CharacterAddedStar);
+        CharacterAddedStar(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "YUMMYFENT2" then
+        Player.CharacterAdded:Connect(CharacterAddedStar);
+        CharacterAddedStar(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "FentFeenin2009" then
+        Player.CharacterAdded:Connect(CharacterAddedStar);
+        CharacterAddedStar(Player.Character);
+    end
+end);
+
+local Players = game:GetService('Players');
+local RunService = game:GetService('RunService');
+
+local function CharacterAddedDevil(Character)
+    local display = Character:WaitForChild('Humanoid').DisplayName
+    Character:WaitForChild('Humanoid').DisplayName = "[😈]"..display.."";
+end;
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "Lomatia" then
+        Player.CharacterAdded:Connect(CharacterAddedDevil);
+        CharacterAddedDevil(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "FENTIN4FEENNUMBER1" then
+        Player.CharacterAdded:Connect(CharacterAddedDevil);
+        CharacterAddedDevil(Player.Character);
+    end
+end);
