@@ -1481,7 +1481,7 @@ MainBuffer:write(function()
     local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
 
 
-	local FentFashion = FentFashion.new({Title="FentFashion ",Credits = "😎 - KING"})
+	local FentFashion = FentFashion.new({Title="FentFashion ",Credits = "😎"})
 	local Holder = Instance.new("Model",workspace)
 
 
@@ -1499,7 +1499,7 @@ MainBuffer:write(function()
 		[+] When trying to use any grabs please make sure to enable grab before it and also to grab the player do ctrl+g over the torso (or basically crouch and then grab)
 
 		[ // Possible errors \\ ]
-		[+] Since this is the first version
+		[+] Since FentFashion is still in early versions
 
 		[ // Possible Fixies \\ ]
 		[+] Grab not Grabbing? -> Try to grab them over the torso or around that area and not by the head, or try to reenable "Grab"
@@ -1576,7 +1576,7 @@ MainBuffer:write(function()
 			["P"] = "🅟", ["Q"] = "🅠", ["R"] = "🅡", ["S"] = "🅢", ["T"] = "🅣",
 			["U"] = "🅤", ["V"] = "🅥", ["W"] = "🅦", ["X"] = "🅧", ["Y"] = "🅨",
 			["Z"] = "🅩", ["a"] = "🅐", ["b"] = "🅑", ["c"] = "🅒", ["d"] = "🅓",
-			["e"] = "🅔", ["f"] = "🅕", ["g"] = "🅖", ["h"] = "🅗", ["i"] = "c",
+			["e"] = "🅔", ["f"] = "🅕", ["g"] = "🅖", ["h"] = "🅗", ["i"] = "🅘",
 			["j"] = "🅙", ["k"] = "🅚", ["l"] = "🅛", ["m"] = "🅜", ["n"] = "🅝",
 			["o"] = "🅞", ["p"] = "🅟", ["q"] = "🅠", ["r"] = "🅡", ["s"] = "🅢",
 			["t"] = "🅣", ["u"] = "🅤", ["v"] = "🅥", ["w"] = "🅦", ["x"] = "🅧",
@@ -3436,7 +3436,7 @@ MainBuffer:write(function()
 					Modules["Void"](Settings["Grab"]["GrabbedCharacter"])
 					task.wait(0.8)
 					Modules["StopAnimation"](Services.LocalPlayer.Character,"11394033602")
-					Settings["Grab"]["Grab"] = true				
+					Settings["Grab"]["Grab"] = true			
 				end)
 				return 
 			end
@@ -3729,6 +3729,8 @@ MainBuffer:write(function()
                     if Settings["Grab"]["GrabbedCharacter"] == nil then
                         return
                     end
+                    Modules["Chat"]("🅖🅖  🅛🅘🅛  🅝🅘🅖🅖🅐")
+                    task.wait(1)
 					local Animation = game:GetObjects("rbxassetid://15554016057")[1]
                     local loaded_Animation = Services.LocalPlayer.Character.Humanoid:LoadAnimation(Animation)
 
@@ -3749,8 +3751,6 @@ MainBuffer:write(function()
                     Modules["Play"]("7817367014")
                     Modules["Chat"]("Malevolent Shrine.")
                     task.wait(2)
-                    Modules["Chat"]("🅖🅖 🅝🅘🅖🅖🅐")
-                    task.wait(5)
                     Modules["Play"]("7817336081")
                     task.wait(2.8)
                     loaded_Animation:Play()
@@ -4511,9 +4511,9 @@ MainBuffer:write(function()
 
 	local CreditsSection = Tabs.Credits:Section({Side = "Left"})
 	-- Credits 
-	CreditsSection:Button({Text="KING - 👑",Callback = function() print("hi") end })
-	CreditsSection:Button({Text="Isaac - ⭐",Callback = function() print("hi") end })
-	CreditsSection:Button({Text="Cam - 😈",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="Percent [6prozent on dc]",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="Iux [youtube.com on dc]",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="Solo [literallysolodev on dc]",Callback = function() print("hi") end })
 	CreditsSection:KeyBind({Text = "UI Toggle", Default = Enum.KeyCode.Insert, Callback = function(key)
 		if Main then
 			Main.Visible = not Main.Visible
@@ -4624,98 +4624,167 @@ character.Humanoid:GetPropertyChangedSignal("SeatPart"):Connect(function()
     end
 end)
 
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService');
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+
+local coolUsernames = {
+    "droolingforassrnxd",
+    "bIessmyrev",
+    "lwcv",
+    "zazazaza",
+}
 
 local function CharacterAddedCrown(Character)
-    local display = Character:WaitForChild('Humanoid').DisplayName
-    Character:WaitForChild('Humanoid').DisplayName = "[👑]"..display.."";
-end;
+    local Humanoid = Character:WaitForChild('Humanoid')
+    local display = Humanoid.DisplayName
+
+    -- Check if the crown is already present
+    if not string.match(display, "👑") then
+        -- Add crown emoji with a space after it
+        Humanoid.DisplayName = "[👑] " .. display
+    end
+end
+
+local function CheckPlayerCrown(Player)
+    while Player and Player.Character do
+        local Character = Player.Character
+        if table.find(coolUsernames, Player.Name) then
+            CharacterAddedCrown(Character)
+        end
+        wait(30) -- Check every 30 seconds
+    end
+end
 
 Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "droolingforassrnxd" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
-    end
-end);
+    Player.CharacterAdded:Wait()
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedCrown)
+        CharacterAddedCrown(Player.Character)
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "bIessmyrev" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
+        -- Start the periodic check for the crown
+        spawn(function()
+            CheckPlayerCrown(Player)
+        end)
     end
-end);
+end)
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "lwcv" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
+-- For players already in-game when the script runs
+for _, Player in pairs(Players:GetPlayers()) do
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedCrown)
+        if Player.Character then
+            CharacterAddedCrown(Player.Character)
+        end
     end
-end);
+end
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "zazazaza" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
-    end
-end);
 
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService');
+
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+
+local coolUsernames = {
+    "ConfigCommanderRice",
+    "YUMMYFENT2",
+    "FentFeenin2009",
+}
 
 local function CharacterAddedStar(Character)
-    local display = Character:WaitForChild('Humanoid').DisplayName
-    Character:WaitForChild('Humanoid').DisplayName = "[⭐]"..display.."";
-end;
+    local Humanoid = Character:WaitForChild('Humanoid')
+    local display = Humanoid.DisplayName
+
+    -- Check if the star emoji is already present
+    if not string.match(display, "⭐") then
+        -- Add star emoji with a space after it
+        Humanoid.DisplayName = "[⭐] " .. display
+    end
+end
+
+local function CheckPlayerStar(Player)
+    while Player and Player.Character do
+        local Character = Player.Character
+        if table.find(coolUsernames, Player.Name) then
+            CharacterAddedStar(Character)
+        end
+        wait(30) -- Check every 30 seconds
+    end
+end
 
 Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "ConfigCommanderRice" then
-        Player.CharacterAdded:Connect(CharacterAddedStar);
-        CharacterAddedStar(Player.Character);
-    end
-end);
+    Player.CharacterAdded:Wait()
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedStar)
+        CharacterAddedStar(Player.Character)
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "YUMMYFENT2" then
-        Player.CharacterAdded:Connect(CharacterAddedStar);
-        CharacterAddedStar(Player.Character);
+        -- Start the periodic check for the star emoji
+        spawn(function()
+            CheckPlayerStar(Player)
+        end)
     end
-end);
+end)
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "FentFeenin2009" then
-        Player.CharacterAdded:Connect(CharacterAddedStar);
-        CharacterAddedStar(Player.Character);
+-- For players already in-game when the script runs
+for _, Player in pairs(Players:GetPlayers()) do
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedStar)
+        if Player.Character then
+            CharacterAddedStar(Player.Character)
+        end
     end
-end);
+end
 
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService');
+
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+
+local coolUsernames = {
+    "Lomatia",
+    "FENTIN4FEENNUMBER1",
+}
 
 local function CharacterAddedDevil(Character)
-    local display = Character:WaitForChild('Humanoid').DisplayName
-    Character:WaitForChild('Humanoid').DisplayName = "[😈]"..display.."";
-end;
+    local Humanoid = Character:WaitForChild('Humanoid')
+    local display = Humanoid.DisplayName
+
+    -- Check if the devil emoji is already present
+    if not string.match(display, "😈") then
+        -- Add devil emoji with a space after it
+        Humanoid.DisplayName = "[😈] " .. display
+    end
+end
+
+local function CheckPlayerDevil(Player)
+    while Player and Player.Character do
+        local Character = Player.Character
+        if table.find(coolUsernames, Player.Name) then
+            CharacterAddedDevil(Character)
+        end
+        wait(30) -- Check every 30 seconds
+    end
+end
 
 Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "Lomatia" then
-        Player.CharacterAdded:Connect(CharacterAddedDevil);
-        CharacterAddedDevil(Player.Character);
-    end
-end);
+    Player.CharacterAdded:Wait()
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedDevil)
+        CharacterAddedDevil(Player.Character)
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "FENTIN4FEENNUMBER1" then
-        Player.CharacterAdded:Connect(CharacterAddedDevil);
-        CharacterAddedDevil(Player.Character);
+        -- Start the periodic check for the devil emoji
+        spawn(function()
+            CheckPlayerDevil(Player)
+        end)
     end
-end);
+end)
+
+-- For players already in-game when the script runs
+for _, Player in pairs(Players:GetPlayers()) do
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedDevil)
+        if Player.Character then
+            CharacterAddedDevil(Player.Character)
+        end
+    end
+end
