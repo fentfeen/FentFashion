@@ -1,39 +1,50 @@
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService');
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+
+local coolUsernames = {
+    "droolingforassrnxd",
+    "bIessmyrev",
+    "lwcv",
+    "zazazaza",
+}
 
 local function CharacterAddedCrown(Character)
-    local display = Character:WaitForChild('Humanoid').DisplayName
-    Character:WaitForChild('Humanoid').DisplayName = "[👑]"..display.."";
-end;
+    local Humanoid = Character:WaitForChild('Humanoid')
+    local display = Humanoid.DisplayName
+    
+    -- Add crown emoji with a space after it
+    Humanoid.DisplayName = "[👑] " .. display
+end
+
+local function CheckPlayerCrown(Player)
+    while Player and Player.Character do
+        local Character = Player.Character
+        if table.find(coolUsernames, Player.Name) then
+            CharacterAddedCrown(Character)
+        end
+        wait(30) -- Check every 30 seconds
+    end
+end
 
 Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "droolingforassrnxd" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
-    end
-end);
+    Player.CharacterAdded:Wait()
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedCrown)
+        CharacterAddedCrown(Player.Character)
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "bIessmyrev" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
+        -- Start the periodic check for the crown
+        spawn(function()
+            CheckPlayerCrown(Player)
+        end)
     end
-end);
+end)
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "lwcv" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
+-- For players already in-game when the script runs
+for _, Player in pairs(Players:GetPlayers()) do
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedCrown)
+        if Player.Character then
+            CharacterAddedCrown(Player.Character)
+        end
     end
-end);
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "zazazaza" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
-    end
-end);
+end
