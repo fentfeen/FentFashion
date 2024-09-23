@@ -3361,7 +3361,7 @@ MainBuffer:write(function()
 						return 
 					end
                     Modules["Chat"]("🅖🅖 🅝🅘🅖🅖🅐")
-                    task.wait(2)
+                    task.wait(1)
 					Services.LocalPlayer.Character.Humanoid.WalkSpeed = 0
 					Settings["Grab"]["Grab"] = false 
 					Modules["Play"]("8063279487")
@@ -3371,7 +3371,7 @@ MainBuffer:write(function()
 						Services.TweenService:Create(game.Lighting, TweenInfo.new(.7), {Brightness = 100}):Play()
 						Services.TweenService:Create(game.Lighting, TweenInfo.new(.7), {Ambient = Color3.fromRGB(0,255,0)}):Play()
 					end
-                    
+
 					Modules["Chat"]("C MOON: GRAVITY MOON")
 					Modules["AnimPlay"](Services.LocalPlayer.Character,8254789608)
 					Settings["Grab"]["GrabbedCharacter"].UpperTorso.Position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0,2000,0)
