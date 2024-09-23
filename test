@@ -3373,8 +3373,6 @@ MainBuffer:write(function()
 					end 
 					Modules["Chat"]("C MOON: GRAVITY MOON")
                     task.wait(0.5)
-                    Modules["Chat"]("🅖🅖  🅝🅘🅖🅖🅐")
-                    task.wait(0.2)
 					Modules["AnimPlay"](Services.LocalPlayer.Character,8254789608)
 					Settings["Grab"]["GrabbedCharacter"].UpperTorso.Position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0,2000,0)
 					task.wait(3.5)
