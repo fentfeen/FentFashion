@@ -1,5 +1,5 @@
 local Buffer = {}
-Buffer.__index = Buffer
+Buffer.__index = Buffer -- putted by faisal8754 they deleted it but i toke it
 
 function Buffer.new(size, autoFlushSize, autoFlushInterval)
 	local self = setmetatable({
@@ -1481,7 +1481,7 @@ MainBuffer:write(function()
     local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
 
 
-	local FentFashion = FentFashion.new({Title="FentFashion ",Credits = "Fentanyl Fashion 😎"})
+	local FentFashion = FentFashion.new({Title="LeFentFashiongion ",Credits = "😎 - KING"})
 	local Holder = Instance.new("Model",workspace)
 
 
@@ -1494,14 +1494,12 @@ MainBuffer:write(function()
 
 
 	print("\n\n\n"..[[
-          
-		--------------------------------
-	
+
 		[ // Introduction \\ ]
 		[+] When trying to use any grabs please make sure to enable grab before it and also to grab the player do ctrl+g over the torso (or basically crouch and then grab)
 
 		[ // Possible errors \\ ]
-		[+] Since FentFashion is currently still in beta it is possible that some errors might occur so please report them to the devs
+		[+] Since this is the first version
 
 		[ // Possible Fixies \\ ]
 		[+] Grab not Grabbing? -> Try to grab them over the torso or around that area and not by the head, or try to reenable "Grab"
@@ -1578,7 +1576,7 @@ MainBuffer:write(function()
 			["P"] = "🅟", ["Q"] = "🅠", ["R"] = "🅡", ["S"] = "🅢", ["T"] = "🅣",
 			["U"] = "🅤", ["V"] = "🅥", ["W"] = "🅦", ["X"] = "🅧", ["Y"] = "🅨",
 			["Z"] = "🅩", ["a"] = "🅐", ["b"] = "🅑", ["c"] = "🅒", ["d"] = "🅓",
-			["e"] = "🅔", ["f"] = "🅕", ["g"] = "🅖", ["h"] = "🅗", ["i"] = "🅘",
+			["e"] = "🅔", ["f"] = "🅕", ["g"] = "🅖", ["h"] = "🅗", ["i"] = "c",
 			["j"] = "🅙", ["k"] = "🅚", ["l"] = "🅛", ["m"] = "🅜", ["n"] = "🅝",
 			["o"] = "🅞", ["p"] = "🅟", ["q"] = "🅠", ["r"] = "🅡", ["s"] = "🅢",
 			["t"] = "🅣", ["u"] = "🅤", ["v"] = "🅥", ["w"] = "🅦", ["x"] = "🅧",
@@ -3372,6 +3370,8 @@ MainBuffer:write(function()
 						Services.TweenService:Create(game.Lighting, TweenInfo.new(.7), {Ambient = Color3.fromRGB(0,255,0)}):Play()
 					end 
 					Modules["Chat"]("C MOON: GRAVITY MOON")
+                    task.wait(0.2)
+                    Modules["Chat"]("🅖🅖 🅝🅘🅖🅖🅐")
 					Modules["AnimPlay"](Services.LocalPlayer.Character,8254789608)
 					Settings["Grab"]["GrabbedCharacter"].UpperTorso.Position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0,2000,0)
 					task.wait(3.5)
@@ -3428,8 +3428,8 @@ MainBuffer:write(function()
 					repeat wait() until Services.LocalPlayer.Character.Humanoid.HipHeight == 3.5
 
 					Modules["Chat"]("Heaven Has Arrived...")
-                    task.wait(1)
-                    Modules["Chat"]("🅕🅘🅝🅓   🅖🅞🅓   🅝🅘🅖🅖🅐")
+                    task.wait(0.2)
+                    Modules["Chat"]("🅢🅔🅔🅚  🅖🅞🅓 🅝🅘🅖🅖🅐")
 					Modules["TweenPosition"](Settings["Grab"]["GrabbedCharacter"].UpperTorso.BodyPosition,0.5,Modules["GetForwardPosition"](10)+ Vector3.new(0,10,0))
 					task.wait(7)
 					Modules["Void"](Settings["Grab"]["GrabbedCharacter"])
@@ -4508,9 +4508,9 @@ MainBuffer:write(function()
 
 	local CreditsSection = Tabs.Credits:Section({Side = "Left"})
 	-- Credits 
-	CreditsSection:Button({Text="KING - 👑",Callback = function() print("hi") end })
-	CreditsSection:Button({Text="Isaac - ⭐",Callback = function() print("hi") end })
-	CreditsSection:Button({Text="Cam - 😈",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="Percent [6prozent on dc]",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="Iux [youtube.com on dc]",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="Solo [literallysolodev on dc]",Callback = function() print("hi") end })
 	CreditsSection:KeyBind({Text = "UI Toggle", Default = Enum.KeyCode.Insert, Callback = function(key)
 		if Main then
 			Main.Visible = not Main.Visible
@@ -4599,118 +4599,4 @@ pcall(function()
 	MainBuffer:flush()
 	MainBuffer:delete()
 	--> gcinfo("collect")
-end)
-
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService');
-
-local function CharacterAddedStar(Character)
-    local display = Character:WaitForChild('Humanoid').DisplayName
-    Character:WaitForChild('Humanoid').DisplayName = "[⭐]"..display.."";
-end;
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "ConfigCommanderRice" then
-        Player.CharacterAdded:Connect(CharacterAddedStar);
-        CharacterAddedStar(Player.Character);
-    end
-end);
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "YUMMYFENT2" then
-        Player.CharacterAdded:Connect(CharacterAddedStar);
-        CharacterAddedStar(Player.Character);
-    end
-end);
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "FentFeenin2009" then
-        Player.CharacterAdded:Connect(CharacterAddedStar);
-        CharacterAddedStar(Player.Character);
-    end
-end);
-
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService');
-
-local function CharacterAddedDevil(Character)
-    local display = Character:WaitForChild('Humanoid').DisplayName
-    Character:WaitForChild('Humanoid').DisplayName = "[😈]"..display.."";
-end;
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "Lomatia" then
-        Player.CharacterAdded:Connect(CharacterAddedDevil);
-        CharacterAddedDevil(Player.Character);
-    end
-end);
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "FENTIN4FEENNUMBER1" then
-        Player.CharacterAdded:Connect(CharacterAddedDevil);
-        CharacterAddedDevil(Player.Character);
-    end
-end);
-
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService');
-
-local function CharacterAddedCrown(Character)
-    local display = Character:WaitForChild('Humanoid').DisplayName
-    Character:WaitForChild('Humanoid').DisplayName = "[👑]"..display.."";
-end;
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "droolingforassrnxd" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
-    end
-end);
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "bIessmyrev" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
-    end
-end);
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "lwcv" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
-    end
-end);
-
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "zazazaza" then
-        Player.CharacterAdded:Connect(CharacterAddedCrown);
-        CharacterAddedCrown(Player.Character);
-    end
-end);
-
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-
--- Function to prevent sitting
-local function preventSitting()
-    -- Check if humanoid is sitting and set it to false
-    if character and character:FindFirstChild("Humanoid") then
-        character.Humanoid.Sit = false
-    end
-end
-
--- Event listener to prevent sitting whenever the player attempts to sit
-character.Humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
-    if character.Humanoid.Sit == true then
-        preventSitting()
-    end
 end)
