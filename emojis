@@ -1,0 +1,3 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/fentfeen/FentFashion/refs/heads/main/Crown"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/fentfeen/FentFashion/refs/heads/main/star"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/fentfeen/FentFashion/refs/heads/main/Devil"))()
