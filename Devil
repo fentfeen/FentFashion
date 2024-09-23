@@ -1,23 +1,51 @@
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService');
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+
+local coolUsernames = {
+    "Lomatia",
+    "FENTIN4FEENNUMBER1",
+}
 
 local function CharacterAddedDevil(Character)
-    local display = Character:WaitForChild('Humanoid').DisplayName
-    Character:WaitForChild('Humanoid').DisplayName = "[😈]"..display.."";
-end;
+    local Humanoid = Character:WaitForChild('Humanoid')
+    local display = Humanoid.DisplayName
+
+    -- Check if the devil emoji is already present
+    if not string.match(display, "😈") then
+        -- Add devil emoji with a space after it
+        Humanoid.DisplayName = "[😈] " .. display
+    end
+end
+
+local function CheckPlayerDevil(Player)
+    while Player and Player.Character do
+        local Character = Player.Character
+        if table.find(coolUsernames, Player.Name) then
+            CharacterAddedDevil(Character)
+        end
+        wait(30) -- Check every 30 seconds
+    end
+end
 
 Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "Lomatia" then
-        Player.CharacterAdded:Connect(CharacterAddedDevil);
-        CharacterAddedDevil(Player.Character);
-    end
-end);
+    Player.CharacterAdded:Wait()
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedDevil)
+        CharacterAddedDevil(Player.Character)
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait();
-    if Player.Name == "FENTIN4FEENNUMBER1" then
-        Player.CharacterAdded:Connect(CharacterAddedDevil);
-        CharacterAddedDevil(Player.Character);
+        -- Start the periodic check for the devil emoji
+        spawn(function()
+            CheckPlayerDevil(Player)
+        end)
     end
-end);
+end)
+
+-- For players already in-game when the script runs
+for _, Player in pairs(Players:GetPlayers()) do
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedDevil)
+        if Player.Character then
+            CharacterAddedDevil(Player.Character)
+        end
+    end
+end
