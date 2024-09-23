@@ -1,0 +1,39 @@
+local Players = game:GetService('Players');
+local RunService = game:GetService('RunService');
+
+local function CharacterAddedCrown(Character)
+    local display = Character:WaitForChild('Humanoid').DisplayName
+    Character:WaitForChild('Humanoid').DisplayName = "[👑]"..display.."";
+end;
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "droolingforassrnxd" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "bIessmyrev" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "lwcv" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "zazazaza" then
+        Player.CharacterAdded:Connect(CharacterAddedCrown);
+        CharacterAddedCrown(Player.Character);
+    end
+end);
