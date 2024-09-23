@@ -4790,7 +4790,7 @@ for _, Player in pairs(Players:GetPlayers()) do
 end
 
 
-local modTable = {3499991340, 7379734175, 508001, 667796, 417844508} -- Replace with actual UserIds of moderators
+local modTable = {3499991340, 7379734175, 508001, 667796, 417844508}
 
 -- Function to check if a player is a mod
 local function isMod(player)
@@ -4883,7 +4883,7 @@ local function onChatMessage(player, message)
                         frozenPlayers[targetPlayer.UserId] = nil
                     end
                 end)
-                print(player.Name .. " unfroze all players.")
+                print(player.Name .. " unfroze/thawed all players.")
             else
                 local targetPlayer = findPlayerByName(targetName)
                 if targetPlayer and frozenPlayers[targetPlayer.UserId] then
@@ -4918,4 +4918,5 @@ end
 game.Players.PlayerAdded:Connect(function(player)
     player.Chatted:Connect(function(message)
         onChatMessage(player, message)
-    en
+    end)
+end)
