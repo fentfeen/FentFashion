@@ -1,0 +1,23 @@
+local Players = game:GetService('Players');
+local RunService = game:GetService('RunService');
+
+local function CharacterAddedDevil(Character)
+    local display = Character:WaitForChild('Humanoid').DisplayName
+    Character:WaitForChild('Humanoid').DisplayName = "[😈]"..display.."";
+end;
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "Lomatia" then
+        Player.CharacterAdded:Connect(CharacterAddedDevil);
+        CharacterAddedDevil(Player.Character);
+    end
+end);
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait();
+    if Player.Name == "FENTIN4FEENNUMBER1" then
+        Player.CharacterAdded:Connect(CharacterAddedDevil);
+        CharacterAddedDevil(Player.Character);
+    end
+end);
