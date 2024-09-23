@@ -1481,7 +1481,7 @@ MainBuffer:write(function()
     local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
 
 
-	local FentFashion = FentFashion.new({Title="LeFentFashiongion ",Credits = "😎 - KING"})
+	local FentFashion = FentFashion.new({Title="FentFashion ",Credits = "😎 - KING"})
 	local Holder = Instance.new("Model",workspace)
 
 
@@ -4510,9 +4510,9 @@ MainBuffer:write(function()
 
 	local CreditsSection = Tabs.Credits:Section({Side = "Left"})
 	-- Credits 
-	CreditsSection:Button({Text="Percent [6prozent on dc]",Callback = function() print("hi") end })
-	CreditsSection:Button({Text="Iux [youtube.com on dc]",Callback = function() print("hi") end })
-	CreditsSection:Button({Text="Solo [literallysolodev on dc]",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="KING - 👑",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="Isaac - ⭐",Callback = function() print("hi") end })
+	CreditsSection:Button({Text="Cam - 😈",Callback = function() print("hi") end })
 	CreditsSection:KeyBind({Text = "UI Toggle", Default = Enum.KeyCode.Insert, Callback = function(key)
 		if Main then
 			Main.Visible = not Main.Visible
@@ -4606,18 +4606,20 @@ end)
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
--- Function to prevent sitting
+-- Function to disconnect the weld that attaches the player to the seat
 local function preventSitting()
-    -- Check if humanoid is sitting and set it to false
     if character and character:FindFirstChild("Humanoid") then
-        character.Humanoid.Sit = false
+        local seatPart = character.Humanoid.SeatPart
+        if seatPart then
+            seatPart:Sit(nil)  -- Makes the player stand up if seated
+        end
     end
 end
 
--- Event listener to prevent sitting whenever the player attempts to sit
-character.Humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
-    if character.Humanoid.Sit == true then
-        preventSitting()
+-- Event listener for when the player sits
+character.Humanoid:GetPropertyChangedSignal("SeatPart"):Connect(function()
+    if character.Humanoid.SeatPart then
+        preventSitting()  -- Immediately stand up
     end
 end)
 
