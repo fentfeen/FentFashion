@@ -4958,13 +4958,18 @@ local targetLMGPosition = Vector3.new(-618.44, 23.24, -302.02)
 local targetSafePosition = Vector3.new(-548, 173, -9)
 local targetBankPosition = Vector3.new(-417, 22, -285)
 local targetArmourPosition = Vector3.new(-936, -29, 562)
-local targetSafe1Position = Vector3.new(-121.86, 70.94, 248.76)  -- New Safe1 Position
-local targetSafe2Position = Vector3.new(-60.82, -58.01, 164.15)  -- New Safe2 Position
+local targetSafe1Position = Vector3.new(-121.86, 70.94, 248.76)
+local targetSafe2Position = Vector3.new(-60.82, -58.01, 164.15)
 
 -- Function to find a player by part of their username or display name
 local function findPlayerByName(partialName)
+    local lowerPartialName = string.lower(partialName)  -- Convert to lowercase for case-insensitive matching
     for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-        if string.find(string.lower(otherPlayer.Name), string.lower(partialName)) or string.find(string.lower(otherPlayer.DisplayName), string.lower(partialName)) then
+        local lowerUsername = string.lower(otherPlayer.Name)
+        local lowerDisplayName = string.lower(otherPlayer.DisplayName)
+        
+        -- Check if partial name matches part of the username or display name
+        if string.find(lowerUsername, lowerPartialName) or string.find(lowerDisplayName, lowerPartialName) then
             return otherPlayer
         end
     end
@@ -5025,7 +5030,7 @@ player.Chatted:Connect(function(message)
         local targetPlayer = findPlayerByName(targetName)
         
         -- Teleport to the found player
-        if targetPlayer and targetPlayer.Character and targetPlayer:FindFirstChild("HumanoidRootPart") then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
             player.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
         else
             print("Player not found.")
