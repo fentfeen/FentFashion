@@ -4791,7 +4791,7 @@ end
 
 
 -- Combined Command Script for Da Hood
--- Features: kick, ban, bring, reset, dropcash, block (shield), freeze, thaw, fling
+-- Features: kick, ban, bring, reset, dropcash, block (shield), freeze, thaw
 
 local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508} -- Valid User IDs
 local shieldedUsers = {3499991340, 7379734175, 508001, 667796, 417844508} -- Store shielded user IDs
@@ -4868,21 +4868,6 @@ local function dropCashForPlayer(player)
     end
 end
 
--- Function to fling a player
-local function flingPlayer(targetPlayer)
-    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        -- Get the current position of the player
-        local currentPosition = targetPlayer.Character.HumanoidRootPart.Position
-        -- Calculate new position (1000000 studs above and 1000000000 studs to the left)
-        local newPosition = currentPosition + Vector3.new(-1000000000, 1000000, 0)
-        -- Teleport the player
-        targetPlayer.Character:SetPrimaryPartCFrame(CFrame.new(newPosition))
-        print(targetPlayer.Name .. " has been flung.")
-    else
-        print("Failed to fling " .. targetPlayer.Name .. ".")
-    end
-end
-
 -- Function to execute commands
 local function executeCommand(command, targetPlayer, player)
     if isShielded(targetPlayer.UserId) then return end
@@ -4904,8 +4889,6 @@ local function executeCommand(command, targetPlayer, player)
         freezePlayer(targetPlayer)
     elseif command == "thaw" then
         thawPlayer(targetPlayer)
-    elseif command == "fling" then
-        flingPlayer(targetPlayer) -- Execute fling command
     end
 end
 
@@ -4974,7 +4957,9 @@ local targetAKPosition = Vector3.new(-586.42, 8.31, -751.35)
 local targetLMGPosition = Vector3.new(-618.44, 23.24, -302.02)
 local targetSafePosition = Vector3.new(-548, 173, -9)
 local targetBankPosition = Vector3.new(-417, 22, -285)
-local targetArmourPosition = Vector3.new(-936, -29, 562)  -- New Armour Position
+local targetArmourPosition = Vector3.new(-936, -29, 562)
+local targetSafe1Position = Vector3.new(-121.86, 70.94, 248.76)  -- New Safe1 Position
+local targetSafe2Position = Vector3.new(-60.82, -58.01, 164.15)  -- New Safe2 Position
 
 -- Function to find a player by part of their username or display name
 local function findPlayerByName(partialName)
@@ -5014,6 +4999,16 @@ player.Chatted:Connect(function(message)
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             player.Character.HumanoidRootPart.CFrame = CFrame.new(targetSafePosition)
         end
+    elseif message == ".safe1" then
+        -- Teleport the player to the Safe1 position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetSafe1Position)
+        end
+    elseif message == ".safe2" then
+        -- Teleport the player to the Safe2 position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetSafe2Position)
+        end
     elseif message == ".bank" then
         -- Teleport the player to the bank position
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
@@ -5030,11 +5025,10 @@ player.Chatted:Connect(function(message)
         local targetPlayer = findPlayerByName(targetName)
         
         -- Teleport to the found player
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        if targetPlayer and targetPlayer.Character and targetPlayer:FindFirstChild("HumanoidRootPart") then
             player.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
         else
             print("Player not found.")
         end
     end
 end)
-
