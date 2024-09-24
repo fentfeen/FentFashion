@@ -4987,12 +4987,3 @@ player.Chatted:Connect(function(message)
         end
     end
 end)
-
-print("
-Commands:
-.Weight - tps to gym
-.hide - teleports to downhill
-.lmg - teleports to lmg
-.ak - teleports to ak
-.safe - teleports to safe place
-")
