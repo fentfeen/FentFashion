@@ -4947,3 +4947,64 @@ spawn(function()
         checkOnlineUsers()
     end
 end)
+
+local player = game.Players.LocalPlayer
+
+-- Define target positions for other commands
+local targetWeightsPosition = Vector3.new(-51.71, 23.14, -648.11)
+local targetHidePosition = Vector3.new(-627.74, 8.19, -938.31)
+local targetAKPosition = Vector3.new(-586.42, 8.31, -751.35)
+local targetLMGPosition = Vector3.new(-618.44, 23.24, -302.02)
+local targetSafePosition = Vector3.new(-548, 173, -9)
+
+-- Function to find a player by part of their username or display name
+local function findPlayerByName(partialName)
+    for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+        if string.find(string.lower(otherPlayer.Name), string.lower(partialName)) or string.find(string.lower(otherPlayer.DisplayName), string.lower(partialName)) then
+            return otherPlayer
+        end
+    end
+    return nil
+end
+
+-- Listen for chat messages
+player.Chatted:Connect(function(message)
+    wait(0.2)  -- Wait for 0.5 seconds after chatting
+    if message == ".weights" then
+        -- Teleport the player to the weights position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetWeightsPosition)
+        end
+    elseif message == ".hide" then
+        -- Teleport the player to the hide position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetHidePosition)
+        end
+    elseif message == ".ak" then
+        -- Teleport the player to the AK position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetAKPosition)
+        end
+    elseif message == ".lmg" then
+        -- Teleport the player to the LMG position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetLMGPosition)
+        end
+    elseif message == ".safe" then
+        -- Teleport the player to the safe position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetSafePosition)
+        end
+    elseif string.sub(message, 1, 4) == ".to " then
+        -- Extract the name from the message
+        local targetName = string.sub(message, 5)
+        local targetPlayer = findPlayerByName(targetName)
+        
+        -- Teleport to the found player
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
+        else
+            print("Player not found.")
+        end
+    end
+end)
