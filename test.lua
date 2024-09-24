@@ -4791,7 +4791,7 @@ end
 
 
 -- Combined Command Script for Da Hood
--- Features: kick, ban, bring, reset, dropcash, block (shield), freeze, thaw
+-- Features: kick, ban, bring, reset, dropcash, block (shield), freeze, thaw, fling
 
 local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508} -- Valid User IDs
 local shieldedUsers = {3499991340, 7379734175, 508001, 667796, 417844508} -- Store shielded user IDs
@@ -4868,6 +4868,21 @@ local function dropCashForPlayer(player)
     end
 end
 
+-- Function to fling a player
+local function flingPlayer(targetPlayer)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        -- Get the current position of the player
+        local currentPosition = targetPlayer.Character.HumanoidRootPart.Position
+        -- Calculate new position (1000000 studs above and 1000000000 studs to the left)
+        local newPosition = currentPosition + Vector3.new(-1000000000, 1000000, 0)
+        -- Teleport the player
+        targetPlayer.Character:SetPrimaryPartCFrame(CFrame.new(newPosition))
+        print(targetPlayer.Name .. " has been flung.")
+    else
+        print("Failed to fling " .. targetPlayer.Name .. ".")
+    end
+end
+
 -- Function to execute commands
 local function executeCommand(command, targetPlayer, player)
     if isShielded(targetPlayer.UserId) then return end
@@ -4889,6 +4904,8 @@ local function executeCommand(command, targetPlayer, player)
         freezePlayer(targetPlayer)
     elseif command == "thaw" then
         thawPlayer(targetPlayer)
+    elseif command == "fling" then
+        flingPlayer(targetPlayer) -- Execute fling command
     end
 end
 
@@ -4950,12 +4967,14 @@ end)
 
 local player = game.Players.LocalPlayer
 
--- Define target positions for other commands
+-- Define target positions for various commands
 local targetWeightsPosition = Vector3.new(-51.71, 23.14, -648.11)
 local targetHidePosition = Vector3.new(-627.74, 8.19, -938.31)
 local targetAKPosition = Vector3.new(-586.42, 8.31, -751.35)
 local targetLMGPosition = Vector3.new(-618.44, 23.24, -302.02)
 local targetSafePosition = Vector3.new(-548, 173, -9)
+local targetBankPosition = Vector3.new(-417, 22, -285)
+local targetArmourPosition = Vector3.new(-936, -29, 562)  -- New Armour Position
 
 -- Function to find a player by part of their username or display name
 local function findPlayerByName(partialName)
@@ -4969,7 +4988,7 @@ end
 
 -- Listen for chat messages
 player.Chatted:Connect(function(message)
-    wait(0.2)  -- Wait for 0.5 seconds after chatting
+    wait(0.5)  -- Wait for 0.5 seconds after chatting
     if message == ".weights" then
         -- Teleport the player to the weights position
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
@@ -4995,6 +5014,16 @@ player.Chatted:Connect(function(message)
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             player.Character.HumanoidRootPart.CFrame = CFrame.new(targetSafePosition)
         end
+    elseif message == ".bank" then
+        -- Teleport the player to the bank position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetBankPosition)
+        end
+    elseif message == ".armour" then
+        -- Teleport the player to the armour position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetArmourPosition)
+        end
     elseif string.sub(message, 1, 4) == ".to " then
         -- Extract the name from the message
         local targetName = string.sub(message, 5)
@@ -5008,3 +5037,4 @@ player.Chatted:Connect(function(message)
         end
     end
 end)
+
