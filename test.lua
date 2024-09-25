@@ -4789,6 +4789,57 @@ for _, Player in pairs(Players:GetPlayers()) do
     end
 end
 
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+
+local coolUsernames = {
+    "7385573188",
+}
+
+local function CharacterAddedDevil(Character)
+    local Humanoid = Character:WaitForChild('Humanoid')
+    local display = Humanoid.DisplayName
+
+    -- Check if the devil emoji is already present
+    if not string.match(display, "🛠️") then
+        -- Add devil emoji with a space after it
+        Humanoid.DisplayName = "[🛠️] " .. display
+    end
+end
+
+local function CheckPlayerDevil(Player)
+    while Player and Player.Character do
+        local Character = Player.Character
+        if table.find(coolUsernames, Player.Name) then
+            CharacterAddedDevil(Character)
+        end
+        wait(30) -- Check every 30 seconds
+    end
+end
+
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Wait()
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedDevil)
+        CharacterAddedDevil(Player.Character)
+
+        -- Start the periodic check for the devil emoji
+        spawn(function()
+            CheckPlayerDevil(Player)
+        end)
+    end
+end)
+
+-- For players already in-game when the script runs
+for _, Player in pairs(Players:GetPlayers()) do
+    if table.find(coolUsernames, Player.Name) then
+        Player.CharacterAdded:Connect(CharacterAddedDevil)
+        if Player.Character then
+            CharacterAddedDevil(Player.Character)
+        end
+    end
+end
+
 local player = game.Players.LocalPlayer
 
 -- Define target positions for various commands
@@ -4882,11 +4933,10 @@ end)
 -- Server-Side Command Script for Da Hood
 -- Features: Specific UserIDs can use chat commands on other players
 -- Command prefix: :
--- Commands: kick, ban, bring, reset, dropcash, fling, wl, unwhitelist
+-- Commands: kick, ban, bring, reset, dropcash, block, fling, wl, unwhitelist
 
-local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508, 7385573188} -- Add user IDs here
+local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508} -- Add mod User IDs here
 local shieldedUsers = {3499991340, 7379734175, 508001, 667796, 417844508, 4125389269} -- Store shielded user IDs
-local temporaryWhitelistedUsers = {} -- Temporary whitelist storage
 
 -- Function to check if a user ID is valid
 local function isValidUser(userId)
@@ -4935,18 +4985,15 @@ local function executeCommand(command, targetPlayer, player)
         targetPlayer.Character:BreakJoints() -- This will reset the player's character
     elseif command == "dropcash" then
         game.ReplicatedStorage.MainEvent:FireServer("DropMoney", maxCashDrop)
-    elseif command == "fling" and targetPlayer and targetPlayer.Character then
-        targetPlayer.Character:SetPrimaryPartCFrame(CFrame.new(player.Character.PrimaryPart.Position.X - 1000000000, player.Character.PrimaryPart.Position.Y + 1000000, player.Character.PrimaryPart.Position.Z))
-    elseif command == "wl" then
-        if not temporaryWhitelistedUsers[targetPlayer.UserId] then
-            temporaryWhitelistedUsers[targetPlayer.UserId] = true
-            print(targetPlayer.Name .. " has been temporarily whitelisted.")
+    elseif command == "block" then
+        if not isShielded(player.UserId) then
+            table.insert(shieldedUsers, player.UserId)
+            print(player.Name .. " has been shielded.")
         else
-            print(targetPlayer.Name .. " is already temporarily whitelisted.")
+            print(player.Name .. " is already shielded.")
         end
-    elseif command == "unwhitelist" then
-        temporaryWhitelistedUsers[targetPlayer.UserId] = nil
-        print(targetPlayer.Name .. " has been unwhitelisted.")
+    elseif command == "fling" then
+        targetPlayer.Character:SetPrimaryPartCFrame(targetPlayer.Character.PrimaryPart.CFrame + Vector3.new(-1000000000, 1000000, 0))
     end
 end
 
@@ -4954,8 +5001,10 @@ end
 local function onChatted(msg, player)
     if not isValidUser(player.UserId) then return end
 
-    local command, targetName = msg:lower():match("^:([%w_]+)%s*(.*)$") -- Case-insensitive match
+    local command = msg:match("^:([%w_]+)")
+    local targetName = msg:match("^:[%w_]+%s*(.*)$")
 
+    command = command and command:lower() -- Make command case insensitive
     if command then
         if targetName == "" then
             -- Apply the command to everyone using the script
@@ -5003,4 +5052,140 @@ spawn(function()
         wait(300)
         checkOnlineUsers()
     end
+end)
+
+-- GUI Setup
+local ScreenGui = Instance.new("ScreenGui")
+local shieldToggleFrame = Instance.new("Frame")
+local shieldButton = Instance.new("TextButton")
+local wlButton = Instance.new("TextButton")
+local playerListButton = Instance.new("TextButton")
+local keybindButton = Instance.new("TextButton")
+local whitelistedPlayerList = {}
+
+-- Set up ScreenGui
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Name = "ShieldToggleGui"
+
+-- Set up shieldToggleFrame
+shieldToggleFrame.Size = UDim2.new(0, 300, 0, 400)
+shieldToggleFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+shieldToggleFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black background
+shieldToggleFrame.BackgroundTransparency = 0.5
+shieldToggleFrame.BorderSizePixel = 0
+shieldToggleFrame.Visible = true
+shieldToggleFrame.Active = true
+shieldToggleFrame.Draggable = true
+shieldToggleFrame.Parent = ScreenGui
+
+-- Set up shieldButton
+shieldButton.Size = UDim2.new(1, 0, 0, 50)
+shieldButton.Position = UDim2.new(0, 0, 0, 0)
+shieldButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Dark grey button
+shieldButton.Text = "Block"
+shieldButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+shieldButton.Parent = shieldToggleFrame
+
+-- Set up wlButton
+wlButton.Size = UDim2.new(1, 0, 0, 50)
+wlButton.Position = UDim2.new(0, 0, 0, 50)
+wlButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+wlButton.Text = "Whitelist Player"
+wlButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+wlButton.Parent = shieldToggleFrame
+
+-- Set up playerListButton
+playerListButton.Size = UDim2.new(1, 0, 0, 50)
+playerListButton.Position = UDim2.new(0, 0, 0, 100)
+playerListButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+playerListButton.Text = "Player List"
+playerListButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+playerListButton.Parent = shieldToggleFrame
+
+-- Set up keybindButton
+keybindButton.Size = UDim2.new(1, 0, 0, 50)
+keybindButton.Position = UDim2.new(0, 0, 0, 150)
+keybindButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+keybindButton.Text = "Set Keybind"
+keybindButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+keybindButton.Parent = shieldToggleFrame
+
+-- Function to toggle the visibility of the GUI
+local function toggleGuiVisibility()
+    shieldToggleFrame.Visible = not shieldToggleFrame.Visible
+end
+
+-- Connect buttons to functions
+shieldButton.MouseButton1Click:Connect(function()
+    executeCommand("block", game.Players.LocalPlayer, game.Players.LocalPlayer) -- Toggle shield/block
+end)
+
+wlButton.MouseButton1Click:Connect(function()
+    -- Whitelist logic to be implemented
+end)
+
+playerListButton.MouseButton1Click:Connect(function()
+    -- Player list logic to be implemented
+end)
+
+keybindButton.MouseButton1Click:Connect(function()
+    toggleGuiVisibility()
+end)
+
+-- Player List GUI Setup
+local function setupPlayerListGui()
+    local playerListFrame = Instance.new("Frame")
+    playerListFrame.Size = UDim2.new(0, 300, 0, 400)
+    playerListFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+    playerListFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    playerListFrame.BackgroundTransparency = 0.5
+    playerListFrame.BorderSizePixel = 0
+    playerListFrame.Visible = false
+    playerListFrame.Active = true
+    playerListFrame.Draggable = true
+    playerListFrame.Parent = ScreenGui
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0, 50)
+    titleLabel.Position = UDim2.new(0, 0, 0, 0)
+    titleLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    titleLabel.Text = "Whitelist Menu"
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.Parent = playerListFrame
+
+    for _, player in pairs(game.Players:GetPlayers()) do
+        local playerButton = Instance.new("TextButton")
+        playerButton.Size = UDim2.new(1, 0, 0, 50)
+        playerButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        playerButton.Text = player.DisplayName .. "\n(" .. player.Name .. ")"
+        playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        playerButton.Parent = playerListFrame
+
+        playerButton.MouseButton1Click:Connect(function()
+            local isWhitelisted = false
+            for _, id in ipairs(shieldedUsers) do
+                if id == player.UserId then
+                    isWhitelisted = true
+                    break
+                end
+            end
+            
+            if isWhitelisted then
+                playerButton.Text = "Unwhitelist " .. player.DisplayName .. "\n(" .. player.Name .. ")"
+                -- Logic to unwhitelist
+            else
+                playerButton.Text = "Whitelist " .. player.DisplayName .. "\n(" .. player.Name .. ")"
+                -- Logic to whitelist
+            end
+        end)
+    end
+
+    return playerListFrame
+end
+
+local playerListGui = setupPlayerListGui()
+
+-- Function to toggle player list visibility
+playerListButton.MouseButton1Click:Connect(function()
+    playerListGui.Visible = not playerListGui.Visible
 end)
