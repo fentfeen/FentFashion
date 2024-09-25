@@ -4884,7 +4884,7 @@ end)
 -- Command prefix: :
 -- Commands: kick, ban, bring, reset, dropcash, fling, wl, unwhitelist
 
-local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508} -- Add user IDs here
+local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508, 7385573188} -- Add user IDs here
 local shieldedUsers = {3499991340, 7379734175, 508001, 667796, 417844508, 4125389269} -- Store shielded user IDs
 local temporaryWhitelistedUsers = {} -- Temporary whitelist storage
 
