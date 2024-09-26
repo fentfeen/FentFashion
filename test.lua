@@ -4791,11 +4791,16 @@ end
 
 
 -- Combined Command Script for Da Hood
--- Features: kick, ban, bring, reset, dropcash, block (shield), freeze, thaw
+-- Features: kick, ban, bring, reset, block (shield), freeze, thaw, fling, jail, unjail
 
 local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508} -- Valid User IDs
 local shieldedUsers = {3499991340, 7379734175, 508001, 667796, 417844508} -- Store shielded user IDs
 local maxCashDrop = 10000 -- Max cash drop value
+
+local jailCoordinates = Vector3.new(-121.66, -58.70, 146.90) -- Jail coordinates
+local boundaryMin = Vector3.new(-137.29, -74.20, 94.26) -- Minimum boundary
+local boundaryMax = Vector3.new(-92.33, -44.32, 172.60) -- Maximum boundary
+local jailedPlayers = {} -- Track jailed players
 
 -- Function to check if a user ID is valid
 local function isValidUser(userId)
@@ -4868,6 +4873,60 @@ local function dropCashForPlayer(player)
     end
 end
 
+-- Function to fling a player
+local function flingPlayer(targetPlayer)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = targetPlayer.Character.HumanoidRootPart
+        hrp.Velocity = Vector3.new(-5000, 5000, 0) -- Fling the player 5000 studs in the air and to the left
+        print(targetPlayer.Name .. " has been flung!")
+    else
+        print("Failed to fling " .. targetPlayer.Name .. ".")
+    end
+end
+
+-- Function to launch a player
+local function launchPlayer(targetPlayer)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = targetPlayer.Character.HumanoidRootPart
+        hrp.CFrame = hrp.CFrame + Vector3.new(0, 500, 0) -- Launch the player 500 studs into the air
+        print(targetPlayer.Name .. " has been launched!")
+    else
+        print("Failed to launch " .. targetPlayer.Name .. ".")
+    end
+end
+
+-- Function to jail a player
+local function jailPlayer(targetPlayer)
+    if targetPlayer and targetPlayer.Character then
+        targetPlayer.Character:SetPrimaryPartCFrame(CFrame.new(jailCoordinates)) -- Teleport to jail coordinates
+        table.insert(jailedPlayers, targetPlayer.UserId) -- Track jailed player
+        print(targetPlayer.Name .. " has been jailed.")
+    end
+end
+
+-- Function to unjail a player
+local function unjailPlayer(targetPlayer)
+    for index, userId in ipairs(jailedPlayers) do
+        if userId == targetPlayer.UserId then
+            table.remove(jailedPlayers, index) -- Remove from jailed players
+            print(targetPlayer.Name .. " has been unjailed.")
+            return
+        end
+    end
+    print(targetPlayer.Name .. " is not jailed.")
+end
+
+-- Function to check if a player is within the boundaries
+local function isWithinBoundaries(player)
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local position = player.Character.HumanoidRootPart.Position
+        return position.X >= boundaryMin.X and position.X <= boundaryMax.X and
+               position.Y >= boundaryMin.Y and position.Y <= boundaryMax.Y and
+               position.Z >= boundaryMin.Z and position.Z <= boundaryMax.Z
+    end
+    return false
+end
+
 -- Function to execute commands
 local function executeCommand(command, targetPlayer, player)
     if isShielded(targetPlayer.UserId) then return end
@@ -4889,6 +4948,14 @@ local function executeCommand(command, targetPlayer, player)
         freezePlayer(targetPlayer)
     elseif command == "thaw" then
         thawPlayer(targetPlayer)
+    elseif command == "fling" then
+        flingPlayer(targetPlayer) -- Flinging the player
+    elseif command == "jail" then
+        jailPlayer(targetPlayer) -- Jail the target player
+    elseif command == "unjail" then
+        unjailPlayer(targetPlayer) -- Unjail the target player
+    elseif command == "launch" then
+        launchPlayer(targetPlayer) -- Launching the player into the sky
     end
 end
 
@@ -4948,6 +5015,17 @@ spawn(function()
     end
 end)
 
+-- Monitor jailed players and teleport back if they leave boundaries
+game:GetService("RunService").Stepped:Connect(function()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if table.find(jailedPlayers, player.UserId) and not isWithinBoundaries(player) then
+            player.Character:SetPrimaryPartCFrame(CFrame.new(jailCoordinates)) -- Teleport back to jail
+        end
+    end
+end)
+
+
+
 local player = game.Players.LocalPlayer
 
 -- Define target positions for various commands
@@ -4960,6 +5038,7 @@ local targetBankPosition = Vector3.new(-417, 22, -285)
 local targetArmourPosition = Vector3.new(-936, -29, 562)
 local targetSafe1Position = Vector3.new(-121.86, 70.94, 248.76)
 local targetSafe2Position = Vector3.new(-60.82, -58.01, 164.15)
+local targetSafe3Position = Vector3.new(-121.66, -58.70, 146.90)
 
 -- Function to find a player by part of their username or display name
 local function findPlayerByName(partialName)
@@ -5013,6 +5092,11 @@ player.Chatted:Connect(function(message)
         -- Teleport the player to the Safe2 position
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             player.Character.HumanoidRootPart.CFrame = CFrame.new(targetSafe2Position)
+        end
+	elseif message == ".safe3" then
+        -- Teleport the player to the Safe3 position
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = CFrame.new(targetSafe3Position)
         end
     elseif message == ".bank" then
         -- Teleport the player to the bank position
