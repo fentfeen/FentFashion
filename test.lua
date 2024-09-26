@@ -4789,56 +4789,164 @@ for _, Player in pairs(Players:GetPlayers()) do
     end
 end
 
-local Players = game:GetService('Players')
-local RunService = game:GetService('RunService')
 
-local coolUsernames = {
-    "FentFashion_testacc",
-}
+-- Combined Command Script for Da Hood
+-- Features: kick, ban, bring, reset, dropcash, block (shield), freeze, thaw
 
-local function CharacterAddedDevil(Character)
-    local Humanoid = Character:WaitForChild('Humanoid')
-    local display = Humanoid.DisplayName
+local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508} -- Valid User IDs
+local shieldedUsers = {3499991340, 7379734175, 508001, 667796, 417844508} -- Store shielded user IDs
+local maxCashDrop = 10000 -- Max cash drop value
 
-    -- Check if the devil emoji is already present
-    if not string.match(display, "🛠️") then
-        -- Add devil emoji with a space after it
-        Humanoid.DisplayName = "[🛠️] " .. display
-    end
-end
-
-local function CheckPlayerDevil(Player)
-    while Player and Player.Character do
-        local Character = Player.Character
-        if table.find(coolUsernames, Player.Name) then
-            CharacterAddedDevil(Character)
+-- Function to check if a user ID is valid
+local function isValidUser(userId)
+    for _, id in ipairs(userIdTable) do
+        if id == userId then
+            return true
         end
-        wait(30) -- Check every 30 seconds
+    end
+    return false
+end
+
+-- Function to check if a user ID is shielded
+local function isShielded(userId)
+    for _, id in ipairs(shieldedUsers) do
+        if id == userId then
+            return true
+        end
+    end
+    return false
+end
+
+-- Function to block (shield) a player (prevent them from being affected by commands)
+local function blockPlayer(player)
+    if not isShielded(player.UserId) then
+        table.insert(shieldedUsers, player.UserId)
+        print(player.Name .. " has been blocked.")
+    else
+        print(player.Name .. " is already blocked.")
     end
 end
 
-Players.PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Wait()
-    if table.find(coolUsernames, Player.Name) then
-        Player.CharacterAdded:Connect(CharacterAddedDevil)
-        CharacterAddedDevil(Player.Character)
-
-        -- Start the periodic check for the devil emoji
-        spawn(function()
-            CheckPlayerDevil(Player)
-        end)
+-- Function to find a player by display name or partial name
+local function findPlayerByDisplayNameOrPartial(displayName)
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.DisplayName:lower():sub(1, #displayName) == displayName:lower() or
+           player.Name:lower():sub(1, #displayName) == displayName:lower() then
+            return player
+        end
     end
+    return nil
+end
+
+-- Function to freeze a player
+local function freezePlayer(targetPlayer)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        targetPlayer.Character.HumanoidRootPart.Anchored = true
+        print(targetPlayer.Name .. " has been frozen.")
+    else
+        print("Failed to freeze " .. targetPlayer.Name .. ".")
+    end
+end
+
+-- Function to thaw a player (unfreeze)
+local function thawPlayer(targetPlayer)
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        targetPlayer.Character.HumanoidRootPart.Anchored = false
+        print(targetPlayer.Name .. " has been thawed.")
+    else
+        print("Failed to thaw " .. targetPlayer.Name .. ".")
+    end
+end
+
+-- Function to drop cash for a player
+local function dropCashForPlayer(player)
+    if game.ReplicatedStorage:FindFirstChild("MainEvent") then
+        game.ReplicatedStorage.MainEvent:FireServer("DropMoney", maxCashDrop)
+        print(player.Name .. " dropped " .. maxCashDrop .. " cash.")
+    else
+        warn("MainEvent not found in ReplicatedStorage.")
+    end
+end
+
+-- Function to execute commands
+local function executeCommand(command, targetPlayer, player)
+    if isShielded(targetPlayer.UserId) then return end
+
+    if command == "kick" then
+        targetPlayer:Kick("You've been kicked from the game.")
+    elseif command == "ban" then
+        table.insert(shieldedUsers, targetPlayer.UserId)
+        targetPlayer:Kick("You've been banned from the game.")
+    elseif command == "bring" and player.Character and targetPlayer.Character then
+        targetPlayer.Character:SetPrimaryPartCFrame(player.Character.PrimaryPart.CFrame)
+    elseif command == "reset" and targetPlayer.Character then
+        targetPlayer.Character:BreakJoints() -- Resets the player's character
+    elseif command == "dropcash" then
+        dropCashForPlayer(player) -- Now using the updated dropcash function
+    elseif command == "block" then
+        blockPlayer(targetPlayer) -- Using the block command to shield a player
+    elseif command == "freeze" then
+        freezePlayer(targetPlayer)
+    elseif command == "thaw" then
+        thawPlayer(targetPlayer)
+    end
+end
+
+-- Function to handle chat commands
+local function onChatted(msg, player)
+    if not isValidUser(player.UserId) then return end
+
+    local command = msg:match("^:([%w_]+)")
+    local targetName = msg:match("^:[%w_]+%s*(.*)$")
+
+    if command then
+        if targetName == "" then
+            -- Apply the command to everyone using the script
+            for _, targetPlayer in ipairs(game.Players:GetPlayers()) do
+                if targetPlayer ~= player and targetPlayer:FindFirstChildOfClass("PlayerGui") then
+                    executeCommand(command, targetPlayer, player)
+                end
+            end
+        else
+            -- Apply the command to the specific target
+            local targetPlayer = findPlayerByDisplayNameOrPartial(targetName)
+            if targetPlayer then
+                executeCommand(command, targetPlayer, player)
+            end
+        end
+    end
+end
+
+-- Connect PlayerAdded event
+game.Players.PlayerAdded:Connect(function(plr)
+    plr.Chatted:Connect(function(msg)
+        onChatted(msg, plr)
+    end)
 end)
 
--- For players already in-game when the script runs
-for _, Player in pairs(Players:GetPlayers()) do
-    if table.find(coolUsernames, Player.Name) then
-        Player.CharacterAdded:Connect(CharacterAddedDevil)
-        if Player.Character then
-            CharacterAddedDevil(Player.Character)
+-- Connect for existing players
+for _, plr in pairs(game.Players:GetPlayers()) do
+    plr.Chatted:Connect(function(msg)
+        onChatted(msg, plr)
+    end)
+end
+
+-- Function to check online users and print to console
+local function checkOnlineUsers()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if isValidUser(player.UserId) then
+            print(player.Name .. " is online")
         end
     end
 end
+
+-- Check for online users every 5 minutes
+spawn(function()
+    while true do
+        wait(300)
+        checkOnlineUsers()
+    end
+end)
 
 local player = game.Players.LocalPlayer
 
@@ -4872,7 +4980,7 @@ end
 player.Chatted:Connect(function(message)
     wait(0.5)  -- Wait for 0.5 seconds after chatting
     if message == ".weights" then
-        -- Teleport the player to the weights positions
+        -- Teleport the player to the weights position
         if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             player.Character.HumanoidRootPart.CFrame = CFrame.new(targetWeightsPosition)
         end
@@ -4927,150 +5035,5 @@ player.Chatted:Connect(function(message)
         else
             print("Player not found.")
         end
-    end
-end)
-
--- Server-Side Command Script for Da Hood
--- Features: Specific UserIDs can use chat commands on other players
--- Command prefix: :
--- Commands: kick, ban, bring, reset, dropcash, block, unblock
-
-local userIdTable = {3499991340, 7379734175, 508001, 667796, 417844508, 7385573188} -- Add mod User IDs here
-local autoShieldedUsers = {3499991340, 7379734175, 508001, 667796, 417844508, 7385573188} -- Automatically shielded user IDs
-local shieldedUsers = {} -- Store shielded user IDs
-
--- Function to check if a user ID is valid
-local function isValidUser(userId)
-    for _, id in ipairs(userIdTable) do
-        if id == userId then
-            return true
-        end
-    end
-    return false
-end
-
--- Function to check if a user ID is shielded
-local function isShielded(userId)
-    for _, id in ipairs(shieldedUsers) do
-        if id == userId then
-            return true
-        end
-    end
-    return false
-end
-
--- Function to find player by display name or partial name
-local function findPlayerByDisplayNameOrPartial(displayName)
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player.DisplayName:lower():sub(1, #displayName) == displayName:lower() or
-           player.Name:lower():sub(1, #displayName) == displayName:lower() then
-            return player
-        end
-    end
-    return nil
-end
-
--- Function to execute commands
-local function executeCommand(command, targetPlayer, player)
-    if command == "kick" then
-        targetPlayer:Kick("You've been kicked from the game.")
-        print(player.Name .. " kicked " .. targetPlayer.Name)
-    elseif command == "ban" then
-        targetPlayer:Kick("You've been banned from the game.")
-        print(player.Name .. " banned " .. targetPlayer.Name)
-    elseif command == "bring" and player.Character and targetPlayer.Character then
-        targetPlayer.Character:SetPrimaryPartCFrame(player.Character.PrimaryPart.CFrame)
-        print(player.Name .. " brought " .. targetPlayer.Name)
-    elseif command == "reset" and targetPlayer.Character then
-        targetPlayer.Character:BreakJoints() -- This will reset the player's character
-        print(player.Name .. " reset " .. targetPlayer.Name)
-    elseif command == "dropcash" then
-        local maxCashDrop = 10000 -- Assume this is the max amount of cash you can drop
-        game.ReplicatedStorage.MainEvent:FireServer("DropMoney", maxCashDrop)
-        print(player.Name .. " dropped cash to " .. targetPlayer.Name)
-    elseif command == "block" then
-        if not isShielded(targetPlayer.UserId) then
-            table.insert(shieldedUsers, targetPlayer.UserId)
-            print(player.Name .. " blocked " .. targetPlayer.Name)
-        end
-    elseif command == "unblock" then
-        for i, id in ipairs(shieldedUsers) do
-            if id == targetPlayer.UserId then
-                table.remove(shieldedUsers, i)
-                print(player.Name .. " unblocked " .. targetPlayer.Name)
-                return
-            end
-        end
-    end
-end
-
--- Function to handle chat commands
-local function onChatted(msg, player)
-    if not isValidUser(player.UserId) then return end
-
-    local command = msg:match("^:([%w_]+)")
-    local targetName = msg:match("^:[%w_]+%s*(.*)$")
-
-    if command then
-        local targetPlayer
-        if targetName and targetName ~= "" then
-            targetPlayer = findPlayerByDisplayNameOrPartial(targetName)
-        end
-        
-        -- If no target is specified, apply the command to all players
-        if not targetPlayer then
-            for _, tp in ipairs(game.Players:GetPlayers()) do
-                if tp ~= player and not isShielded(tp.UserId) then
-                    executeCommand(command:lower(), tp, player)
-                end
-            end
-        else
-            executeCommand(command:lower(), targetPlayer, player)
-        end
-    end
-end
-
--- Connect PlayerAdded event
-game.Players.PlayerAdded:Connect(function(plr)
-    plr.Chatted:Connect(function(msg)
-        onChatted(msg, plr)
-    end)
-    
-    -- Auto-shield players who are in the autoShieldedUsers list
-    for _, id in ipairs(autoShieldedUsers) do
-        if plr.UserId == id then
-            table.insert(shieldedUsers, plr.UserId)
-        end
-    end
-end)
-
--- Connect for existing players
-for _, plr in pairs(game.Players:GetPlayers()) do
-    plr.Chatted:Connect(function(msg)
-        onChatted(msg, plr)
-        
-        -- Auto-shield players who are in the autoShieldedUsers list
-        for _, id in ipairs(autoShieldedUsers) do
-            if plr.UserId == id then
-                table.insert(shieldedUsers, plr.UserId)
-            end
-        end
-    end)
-end
-
--- Function to check online users and print to console
-local function checkOnlineUsers()
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if isValidUser(player.UserId) then
-            print(player.Name .. " is online")
-        end
-    end
-end
-
--- Check for online users every 10 seconds
-spawn(function()
-    while true do
-        wait(300)
-        checkOnlineUsers()
     end
 end)
